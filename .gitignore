@@ -2,3 +2,6 @@ __pycache__/
 .pytest_cache/
 .tox/
 poetry.lock
+dist/
+.*.swp
+door_cam.egg-info/

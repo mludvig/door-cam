@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "door-cam"
-version = "1.0.0"
+version = "0.1.0"
 description = "Door camera"
 authors = ["Michael Ludvig <mludvig@logix.net.nz>"]
 license = "MIT"
+
+[tool.poetry.scripts]
+door-cam = "door_cam.main:main"
 
 [tool.poetry.dependencies]
 python = "^3.6"
