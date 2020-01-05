@@ -1,42 +1,55 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
 
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+
 import pygame
 from pygame.locals import *
-import pygame.camera
 
-# Start Pygame
-pygame.init()
-pygame.camera.init()
+from .camera_local import CameraLocal
+from .camera_remote import CameraRemote
 
-# Create display
-camera_size = (1280, 720)
-display_size = (1366, 768)
-#screen = pygame.display.set_mode((w, h), FULLSCREEN)
-screen = pygame.display.set_mode(display_size)
+class DoorCam:
+    def __init__(self, fullscreen = False):
+        # Start Pygame
+        pygame.init()
 
-pygame.display.set_caption("Door Cam")
-font = pygame.font.SysFont("Arial", 14)
-clock = pygame.time.Clock()
-timer = 0
+        # Create display
+        self.camera_size = (1280, 720)
+        self.display_size = self.camera_size
+        if fullscreen:
+            self.screen = pygame.display.set_mode(self.display_size, FULLSCREEN)
+        else:
+            self.screen = pygame.display.set_mode(self.display_size)
 
-# Open camera
-cam = pygame.camera.Camera("/dev/video0", camera_size, "RGB")
-cam.start()
+        pygame.display.set_caption("Door Cam")
+        self.font = pygame.font.SysFont("Arial", 14)
+        self.clock = pygame.time.Clock()
 
-while True:
-    screen = pygame.display.get_surface()
-    image = cam.get_image()
-    screen.blit(image, (0,0))
-    pygame.display.update()
+    def main_loop(self, camera):
+        while True:
+            image = camera.read()
+            self.screen.blit(image, (0,0))
+            pygame.display.update()
 
-    for event in pygame.event.get():
-        if (event.type == pygame.QUIT or
-            (event.type is KEYDOWN and event.key == K_ESCAPE)):
-                pygame.display.quit()
-                pygame.quit()
-                sys.exit()
+            for event in pygame.event.get():
+                if (event.type == pygame.QUIT or
+                    (event.type is KEYDOWN and event.key == K_ESCAPE)):
+                        self.quit()
+            self.clock.tick(5)
 
-    clock.tick(10)
+    def quit(self):
+        pygame.display.quit()
+        pygame.quit()
+        sys.exit()
+
+def main():
+    camera = CameraLocal()
+    doorcam = DoorCam()
+    doorcam.main_loop(camera)
+
+if __name__ == "__main__":
+    main()
