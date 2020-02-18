@@ -1,21 +1,28 @@
 import time
 
-class FPS:
-    def __init__(self, report_interval = 60, report_format = "{fps:.2f} frames/second", report_func = print):
-        self.report_interval = report_interval
-        self.report_format = report_format
-        self.report_func = report_func
+class FPS_Reporter:
+    report_interval = 0     # Disable by default
+    report_function = print
+    report_format = "{loop_name}: {fps:.2f} FPS"
+
+    def __init__(self, loop_name = "loop"):
+        self.loop_name = loop_name
 
         # Initialise the stats
-        self._timestamp = time.time()
+        self._report_ts = time.time()
         self._loops = 0
 
-    def tick(self):
-        ts_diff = time.time() - self._timestamp
+    def report(self):
+        # Reporting (only if report_interval > 0)
+        if self.report_interval <= 0:
+            return
+
+        ts_current = time.time()
+        ts_diff = ts_current - self._report_ts
         if ts_diff > self.report_interval:
             fps = self._loops/ts_diff
-            self.report_func(self.report_format.format(fps=fps))
+            self.report_function(self.report_format.format(fps=fps, loop_name=self.loop_name))
             self._loops = 0
-            self._timestamp = time.time()
-        else:
-            self._loops += 1
+            self._report_ts = ts_current
+
+        self._loops += 1

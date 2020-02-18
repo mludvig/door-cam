@@ -14,7 +14,7 @@ from pygame.locals import *
 from .camera_local import CameraLocal
 from .camera_remote import CameraRemote
 
-from .fps import FPS
+from .fps import FPS_Reporter
 
 class DoorCam:
     def __init__(self, camera, fullscreen = False):
@@ -35,19 +35,19 @@ class DoorCam:
         self.clock = pygame.time.Clock()
 
     def main_loop(self, target_fps):
-        fps = FPS(report_format="main_loop: {fps:.2f} FPS")
+        fps = FPS_Reporter(loop_name="main_loop")
         while True:
             image = self.camera.read()
             if image:
                 self.screen.blit(image, (0,0))
                 pygame.display.update()
 
-            fps.tick()
-
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT or
                     (event.type is KEYDOWN and event.key == K_ESCAPE)):
                         self.quit()
+
+            fps.report()
             self.clock.tick(target_fps)
 
 
@@ -62,6 +62,9 @@ class DoorCam:
 @click.option("--local-cam", "local", type=click.Path(exists=True), help="Local camera device, e.g. /dev/video0")
 @click.option("--fps", "fps", type=int, help="Display frames per second", default=2)
 def main(remote, local, fps):
+    # Configure FPS_Reporter
+    FPS_Reporter.report_interval = 60
+
     if local:
         click.secho(f"Using local camera: {local}", fg="green")
         camera = CameraLocal(local)
