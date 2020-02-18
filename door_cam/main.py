@@ -14,6 +14,8 @@ from pygame.locals import *
 from .camera_local import CameraLocal
 from .camera_remote import CameraRemote
 
+from .fps import FPS
+
 class DoorCam:
     def __init__(self, camera, fullscreen = False):
         # Start Pygame
@@ -33,11 +35,14 @@ class DoorCam:
         self.clock = pygame.time.Clock()
 
     def main_loop(self, tick=5):
+        fps = FPS(report_format="main_loop: {fps:.2f} FPS")
         while True:
             image = self.camera.read()
             if image:
                 self.screen.blit(image, (0,0))
                 pygame.display.update()
+
+            fps.tick()
 
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT or

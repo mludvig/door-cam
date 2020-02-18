@@ -4,6 +4,8 @@ import numpy as np
 import pygame
 import threading
 
+from .fps import FPS
+
 class CameraRemote:
     def __init__(self, address, camera_size=(1280,720)):
         self._camera_size = camera_size
@@ -32,9 +34,11 @@ class CameraRemote:
 
     def _reader(self):
         print(f"Starting reader thread: {self.reader.name}")
+        fps = FPS(report_format="camera_reader: {fps:.2f} FPS")
         while self._reader_stop == False:
             # Read frame from remote camera
             ret, self._current_frame = self.cap.read()
+            fps.tick()
 
     def read(self):
         if self._current_frame is None:
