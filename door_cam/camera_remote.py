@@ -15,7 +15,7 @@ class CameraRemote:
 
     def read(self):
         # Read frame from remote camera
-        ret, frame = cap.read()
+        ret, frame = self.cap.read()
 
         # Convert from OpenCV frame to PyGame Surface
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
