@@ -12,5 +12,8 @@ class CameraLocal:
         self.camera = pygame.camera.Camera(self._camera_device, self._camera_size, "RGB")
         self.camera.start()
 
+    def close(self):
+        pass
+
     def read(self):
         return self.camera.get_image()

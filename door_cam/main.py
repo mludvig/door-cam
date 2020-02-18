@@ -45,6 +45,7 @@ class DoorCam:
             self.clock.tick(tick)
 
     def quit(self):
+        self.camera.close()
         pygame.display.quit()
         pygame.quit()
         sys.exit()
