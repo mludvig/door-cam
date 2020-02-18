@@ -8,8 +8,8 @@ class CameraRemote:
     def __init__(self, address, camera_size=(1280,720)):
         self._camera_size = camera_size
         self._camera_address = address
-        self.current_frame = None
-        self.reader_stop = False
+        self._current_frame = None
+        self._reader_stop = False
 
         self.open()
 
@@ -26,21 +26,23 @@ class CameraRemote:
     def close(self):
         if self.reader:
             print(f"Stopping the reader thread: {self.reader.name}")
-            self.reader_stop = True
+            self._reader_stop = True
             self.reader.join()
         self.cap.release()
 
     def _reader(self):
         print(f"Starting reader thread: {self.reader.name}")
-        while self.reader_stop == False:
+        while self._reader_stop == False:
             # Read frame from remote camera
-            ret, frame = self.cap.read()
-
-            # Convert from OpenCV frame to PyGame Surface
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            #  convert from (height, width, channel) to (width, height, channel)
-            frame = frame.transpose([1, 0, 2])
-            self.current_frame = pygame.surfarray.make_surface(frame)
+            ret, self._current_frame = self.cap.read()
 
     def read(self):
-        return self.current_frame
+        if self._current_frame is None:
+            return None
+
+        # Convert from OpenCV frame to PyGame Surface
+        frame = cv2.cvtColor(self._current_frame, cv2.COLOR_BGR2RGB)
+        #  convert from (height, width, channel) to (width, height, channel)
+        frame = frame.transpose([1, 0, 2])
+
+        return pygame.surfarray.make_surface(frame)

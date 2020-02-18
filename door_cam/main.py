@@ -35,8 +35,9 @@ class DoorCam:
     def main_loop(self, tick=5):
         while True:
             image = self.camera.read()
-            self.screen.blit(image, (0,0))
-            pygame.display.update()
+            if image:
+                self.screen.blit(image, (0,0))
+                pygame.display.update()
 
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT or
