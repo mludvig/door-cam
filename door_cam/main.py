@@ -19,7 +19,8 @@ from .fps import FPS_Reporter
 class DoorCam:
     def __init__(self, camera, fullscreen = False):
         # Start Pygame
-        pygame.init()
+        pygame.font.init()
+        pygame.display.init()
 
         # Create display
         self.camera = camera
