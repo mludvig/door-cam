@@ -1,8 +1,10 @@
+import threading
+
 import cv2
 import numpy as np
-
 import pygame
-import threading
+
+from loguru import logger
 
 from .fps import FPS_Reporter
 
@@ -27,13 +29,13 @@ class CameraRemote:
 
     def close(self):
         if self.reader:
-            print(f"Stopping the reader thread: {self.reader.name}")
+            logger.info(f"Stopping the reader thread: {self.reader.name}")
             self._reader_stop = True
             self.reader.join()
         self.cap.release()
 
     def _reader(self):
-        print(f"Starting reader thread: {self.reader.name}")
+        logger.info(f"Starting reader thread: {self.reader.name}")
         fps = FPS_Reporter(loop_name="camera_reader")
         while self._reader_stop == False:
             # Read frame from remote camera
